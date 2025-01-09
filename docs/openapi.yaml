@@ -1,0 +1,83 @@
+openapi: "3.0.2"
+
+info:
+  title: Ledger API
+  version: "1.0"
+  contact:
+    name: Bekhruz Iskandarzoda
+    email: iskandarzodabekhruz@gmail.com
+
+tags:
+  - name: Journal
+    description: All the endpoints related to journals and entries management
+
+paths:
+  /entries/{id}/reverse:
+    post:
+      tags:
+        - Journal
+      summary: Reverse entry
+      responses:
+        200:
+          description: "OK"
+  /entries:
+    post:
+      tags:
+        - Journal
+      summary: Create a new entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Entry"
+      responses:
+        200:
+          description: "OK"
+  /entries/{id}:
+    get:
+      tags:
+        - Journal
+      summary: Retrieve an entry by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Entry"
+          description: A journal object
+
+components:
+  schemas:
+    Entry:
+      type: object
+    Transaction:
+      type: object
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "10002"
+        name:
+          type: string
+          example: "Касса"
+        description:
+          type: string
+          example: "Счет отображающий операции по кассе"
+        type:
+          type: string
+          enum:
+            - assets
+            - liabilities
+            - equity
+            - income
+            - expenses
+        balance:
+          type: number
