@@ -4,8 +4,10 @@ import (
 	"context"
 
 	"github.com/bekha-io/ledger/domain/entities"
+	"github.com/bekha-io/ledger/domain/errs"
 	"github.com/bekha-io/ledger/domain/repository"
 	"github.com/bekha-io/ledger/domain/types"
+	"github.com/shopspring/decimal"
 )
 
 type CreateAccountIn struct {
@@ -37,7 +39,31 @@ type AccountService struct {
 
 // CreateAccount implements AccountServiceI.
 func (a *AccountService) CreateAccount(ctx context.Context, in CreateAccountIn) (*entities.Account, error) {
-	panic("unimplemented")
+
+	// First we check if such account exists
+	acc, err := a.Repo.Accounts.GetAccountByID(ctx, in.ID)
+	if err == nil && acc != nil {
+		return nil, errs.ErrAccountWithSuchIDExists
+	}
+
+	// Then we validate and save in repo
+	account := &entities.Account{
+		ID:          in.ID,
+		Name:        in.Name,
+		Description: in.Description,
+		Type:        in.Type,
+		Balance:     decimal.Decimal{},
+	}
+
+	if err := account.Validate(); err != nil {
+		return nil, err
+	}
+
+	if err := a.Repo.Accounts.SaveAccount(ctx, account); err != nil {
+		return nil, err
+	}
+
+	return account, nil
 }
 
 // GetAccountByID implements AccountServiceI.
@@ -47,7 +73,7 @@ func (a *AccountService) GetAccountByID(ctx context.Context, id string) (*entiti
 
 // GetAllAccounts implements AccountServiceI.
 func (a *AccountService) GetAllAccounts(ctx context.Context) ([]*entities.Account, error) {
-	panic("unimplemented")
+	return a.Repo.Accounts.GetAllAccounts(ctx)
 }
 
 // UpdateAccount implements AccountServiceI.

@@ -28,7 +28,12 @@ func (s *Server) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	_, err := s.Svc.Accounts.CreateAccount(c, services.CreateAccountIn{})
+	_, err := s.Svc.Accounts.CreateAccount(c, services.CreateAccountIn{
+		ID:          in.ID,
+		Name:        in.Name,
+		Description: in.Description,
+		Type:        in.Type,
+	})
 	if err != nil {
 		handleError(c, err)
 		return
