@@ -9,3 +9,5 @@ const (
 	AccountTypeIncome      = "income"
 	AccountTypeExpenses    = "expenses"
 )
+
+var AccountTypes = []AccountType{AccountTypeAssets, AccountTypeIncome, AccountTypeLiabilities, AccountTypeEquities, AccountTypeExpenses}

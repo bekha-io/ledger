@@ -8,8 +8,8 @@ import (
 
 // Entry is a collection of transactions that
 type Entry struct {
-	ID      uint
-	Status  types.JournalStatus
+	ID           uint
+	Status       types.EntityStatus
 	Transactions []Transaction
 }
 
