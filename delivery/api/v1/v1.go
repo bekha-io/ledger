@@ -23,6 +23,7 @@ func (s *Server) Register(e *gin.Engine) {
 		entries := v1.Group("/entries")
 		{
 			entries.GET("/:id", s.GetEntryByID)
+			entries.POST("", s.CreateEntry)
 		}
 	}
 }

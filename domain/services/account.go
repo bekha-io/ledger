@@ -68,7 +68,12 @@ func (a *AccountService) CreateAccount(ctx context.Context, in CreateAccountIn) 
 
 // GetAccountByID implements AccountServiceI.
 func (a *AccountService) GetAccountByID(ctx context.Context, id string) (*entities.Account, error) {
-	panic("unimplemented")
+	acc, err := a.Repo.Accounts.GetAccountByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return acc, err
 }
 
 // GetAllAccounts implements AccountServiceI.
@@ -78,5 +83,26 @@ func (a *AccountService) GetAllAccounts(ctx context.Context) ([]*entities.Accoun
 
 // UpdateAccount implements AccountServiceI.
 func (a *AccountService) UpdateAccount(ctx context.Context, in UpdateAccountIn) error {
-	panic("unimplemented")
+	acc, err := a.Repo.Accounts.GetAccountByID(ctx, in.ID)
+	if err != nil {
+		return err
+	}
+
+	if in.Name != "" {
+		acc.Name = in.Name
+	}
+
+	if in.Description != "" {
+		acc.Description = in.Description
+	}
+
+	if err := acc.Validate(); err != nil {
+		return err
+	}
+
+	if err := a.Repo.Accounts.SaveAccount(ctx, acc); err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -8,9 +8,16 @@ import (
 
 // Entry is a collection of transactions that
 type Entry struct {
-	ID           uint
-	Status       types.EntityStatus
-	Transactions []Transaction
+	ID           uint               `json:"id"`
+	Status       types.EntityStatus `json:"status"`
+	Transactions []*Transaction     `json:"transactions"`
+}
+
+func NewEntry(trs ...*Transaction) *Entry {
+	return &Entry{
+		Status:       types.EntityStatusDraft,
+		Transactions: trs,
+	}
 }
 
 func (j *Entry) TotalDebit() decimal.Decimal {
@@ -38,9 +45,10 @@ func (j *Entry) Validate() error {
 
 	for _, tr := range j.Transactions {
 		if tr.Type == types.TransactionTypeDebit {
-			totalBalance.Add(tr.Amount)
+			totalBalance = totalBalance.Add(tr.Amount)
+			continue
 		}
-		totalBalance.Sub(tr.Amount)
+		totalBalance = totalBalance.Sub(tr.Amount)
 	}
 
 	if !totalBalance.IsZero() {
